@@ -1,0 +1,24 @@
+<% function getClass(viewName) { return activeLink === viewName ? 'active' : '' } %>
+
+<nav class="main-header__nav">
+    <ul class="main-header__item-list">
+        <li class="main-header__item">
+            <a class="<%= getClass('shop') %>" href="/">Shop</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= getClass('products') %>" href="/products">Products</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= getClass('cart') %>" href="/cart">Cart</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= getClass('orders') %>" href="/orders">Orders</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= getClass('add-product') %>" href="/admin/add-product">Add Product</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= getClass('admin-products') %>" href="/admin/products">Admin Products</a>
+        </li>
+    </ul>
+</nav>
