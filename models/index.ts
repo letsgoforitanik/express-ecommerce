@@ -13,4 +13,4 @@ Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
-export { Product, User, Cart };
+export { Product, User, Cart, CartItem };

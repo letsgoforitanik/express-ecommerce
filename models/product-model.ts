@@ -1,7 +1,7 @@
 import { Model, DataTypes } from "sequelize";
-
 import sequelize from "../helpers/sequelize";
-import { CartItemAttributes, ProductAttributes } from "../types";
+import { ProductAttributes } from "../types";
+import { CartItem } from ".";
 
 export class Product extends Model<ProductAttributes> implements ProductAttributes {
     declare readonly id: number;
@@ -11,7 +11,7 @@ export class Product extends Model<ProductAttributes> implements ProductAttribut
     declare description: string;
     declare createdAt?: Date;
     declare updatedAt?: Date;
-    declare CartItem?: CartItemAttributes;
+    declare CartItem?: CartItem;
 }
 
 Product.init(
