@@ -1,7 +1,5 @@
-import { ProductAttributes, Product } from "../models";
-
-type ProductCreationDto = Omit<ProductAttributes, "id">;
-type ProductUpdationDto = Partial<ProductCreationDto>;
+import { Product } from "../models";
+import { ProductCreationDto, ProductUpdationDto } from "../types";
 
 export async function addProduct(newProduct: ProductCreationDto) {
     const { title, imageUrl, price, description } = newProduct;
@@ -9,13 +7,11 @@ export async function addProduct(newProduct: ProductCreationDto) {
 }
 
 export async function getAll() {
-    const products = await Product.findAll();
-    return products;
+    return await Product.findAll();
 }
 
 export async function getById(id: number) {
-    const product = await Product.findByPk(id);
-    return product;
+    return await Product.findByPk(id);
 }
 
 export async function updateProduct(id: number, changedAttributes: ProductUpdationDto) {

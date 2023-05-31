@@ -3,7 +3,7 @@ import { createServer } from "http";
 import express from "express";
 import bodyParser from "body-parser";
 
-import { productController, adminController, homeController } from "./controllers";
+import { productController, adminController, homeController, cartController } from "./controllers";
 import sequelize from "./helpers/sequelize";
 
 const app = express();
@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", homeController.router);
 app.use("/admin", adminController.router);
 app.use("/products", productController.router);
+app.use("/cart", cartController.router);
 
 sequelize.sync().then(console.log);
 

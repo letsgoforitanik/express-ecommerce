@@ -1,3 +1,5 @@
 import * as productRepo from "./product-repository";
+import * as userRepo from "./user-repository";
+import * as cartRepo from "./cart-repository";
 
-export { productRepo };
+export { productRepo, userRepo, cartRepo };

@@ -1,24 +1,17 @@
 import { Model, DataTypes } from "sequelize";
+
 import sequelize from "../helpers/sequelize";
+import { CartItemAttributes, ProductAttributes } from "../types";
 
-export interface ProductAttributes {
-    id: number;
-    title: string;
-    imageUrl: string;
-    price: number;
-    description: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-
-export class Product extends Model implements ProductAttributes {
-    declare id: number;
+export class Product extends Model<ProductAttributes> implements ProductAttributes {
+    declare readonly id: number;
     declare title: string;
     declare imageUrl: string;
     declare price: number;
     declare description: string;
-    declare readonly createdAt?: Date;
-    declare readonly updatedAt?: Date;
+    declare createdAt?: Date;
+    declare updatedAt?: Date;
+    declare CartItem?: CartItemAttributes;
 }
 
 Product.init(
@@ -46,5 +39,8 @@ Product.init(
             allowNull: false,
         },
     },
-    { sequelize }
+    {
+        sequelize: sequelize,
+        underscored: true,
+    }
 );
