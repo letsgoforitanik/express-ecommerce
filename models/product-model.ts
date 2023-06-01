@@ -9,8 +9,6 @@ export class Product extends Model<ProductAttributes> implements ProductAttribut
     declare imageUrl: string;
     declare price: number;
     declare description: string;
-    declare createdAt?: Date;
-    declare updatedAt?: Date;
     declare CartItem?: CartItem;
     declare OrderItem?: OrderItem;
 }
@@ -40,8 +38,5 @@ Product.init(
             allowNull: false,
         },
     },
-    {
-        sequelize: sequelize,
-        underscored: true,
-    }
+    { sequelize: sequelize }
 );

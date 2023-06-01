@@ -26,8 +26,5 @@ Order.init(
             autoIncrement: true,
         },
     },
-    {
-        sequelize: sequelize,
-        underscored: true,
-    }
+    { sequelize: sequelize }
 );

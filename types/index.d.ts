@@ -8,6 +8,7 @@ interface ProductAttributes extends TimestampAttributes {
     imageUrl: string;
     price: number;
     description: string;
+    UserId?: number;
 }
 
 type ProductCreationDto = Omit<ProductAttributes, "id" | "createdAt" | "updatedAt">;
@@ -47,6 +48,3 @@ interface OrderItemAttributes extends TimestampAttributes {
     id: number;
     quantity: number;
 }
-
-type OrderProduct = Pick<ProductAttributes, "id" | "title"> & { quantity: number };
-type OrderDto = Pick<OrderAttributes, "id"> & { products: OrderProduct[] };

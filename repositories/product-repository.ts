@@ -1,13 +1,13 @@
-import { Product } from "../models";
+import { Product, User } from "../models";
 import { ProductCreationDto, ProductUpdationDto } from "../types";
 
-export async function addProduct(newProduct: ProductCreationDto) {
-    const { title, imageUrl, price, description } = newProduct;
-    return await Product.create({ title, imageUrl, price, description });
+export async function createProduct(user: User, productData: ProductCreationDto) {
+    await user.createProduct(productData);
 }
 
-export async function getAll() {
-    return await Product.findAll();
+export async function getProducts(user: User) {
+    const products = await Product.findAll({ where: { UserId: user.id } });
+    return products;
 }
 
 export async function getById(id: number) {
@@ -15,11 +15,9 @@ export async function getById(id: number) {
 }
 
 export async function updateProduct(id: number, changedAttributes: ProductUpdationDto) {
-    const product = await Product.findByPk(id);
-    return await product.update({ ...changedAttributes });
+    await Product.update(changedAttributes, { where: { id } });
 }
 
 export async function deleteProduct(id: number) {
-    const product = await Product.findByPk(id);
-    return await product.destroy();
+    await Product.destroy({ where: { id } });
 }

@@ -53,10 +53,7 @@ User.init(
             allowNull: false,
         },
     },
-    {
-        sequelize: sequelize,
-        underscored: true,
-    }
+    { sequelize: sequelize }
 );
 
 export default User;

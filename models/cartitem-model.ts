@@ -20,8 +20,5 @@ CartItem.init(
             allowNull: false,
         },
     },
-    {
-        sequelize: sequelize,
-        underscored: true,
-    }
+    { sequelize }
 );

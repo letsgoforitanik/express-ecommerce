@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/products", async function (_, response) {
     const user = await userRepo.getUser(1);
-    const products = await userRepo.getUserProducts(user);
+    const products = await productRepo.getProducts(user);
 
     response.render("admin/product-list", {
         pageTitle: "Admin Products",
@@ -24,7 +24,7 @@ router.get("/add-product", function (_, response) {
 router.post("/add-product", async function (request, response) {
     const { title, price, description, imageUrl } = request.body;
     const user = await userRepo.getUser(1);
-    await userRepo.addUserProduct(user, { title, price, description, imageUrl });
+    await productRepo.createProduct(user, { title, price, description, imageUrl });
     response.redirect("/");
 });
 

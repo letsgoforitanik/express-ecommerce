@@ -7,16 +7,16 @@ import { User } from "./user-model";
 
 // define all relationships here =======
 User.hasMany(Product);
-Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+Product.belongsTo(User, { onDelete: "CASCADE", foreignKey: { allowNull: false } });
 
 User.hasOne(Cart);
-Cart.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+Cart.belongsTo(User, { onDelete: "CASCADE", foreignKey: { allowNull: false } });
 
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
 User.hasMany(Order);
-Order.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+Order.belongsTo(User, { onDelete: "CASCADE" });
 
 Order.belongsToMany(Product, { through: OrderItem });
 Product.belongsToMany(Order, { through: OrderItem });

@@ -1,10 +1,10 @@
 import { createServer } from "http";
-
 import express from "express";
 import bodyParser from "body-parser";
-
-import { productController, adminController, homeController, cartController, orderController } from "./controllers";
+import { productController, adminController } from "./controllers";
+import { homeController, cartController, orderController } from "./controllers";
 import sequelize from "./helpers/sequelize";
+import { User } from "./models";
 
 const app = express();
 

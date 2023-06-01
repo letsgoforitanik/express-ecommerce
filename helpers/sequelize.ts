@@ -1,13 +1,14 @@
-import { Sequelize, Options } from "sequelize";
+import { Sequelize } from "sequelize";
 
-const options: Options = {
+const sequelize = new Sequelize({
     host: "localhost",
     username: "root",
     password: "root",
     database: "shop",
     dialect: "mysql",
-};
-
-const sequelize = new Sequelize(options);
+    define: {
+        underscored: true,
+    },
+});
 
 export default sequelize;
