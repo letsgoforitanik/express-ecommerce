@@ -34,3 +34,19 @@ interface CartItemAttributes extends TimestampAttributes {
     id: number;
     quantity: number;
 }
+
+////////////////////// Order
+
+interface OrderAttributes extends TimestampAttributes {
+    id: number;
+}
+
+////////////////////// Order Item
+
+interface OrderItemAttributes extends TimestampAttributes {
+    id: number;
+    quantity: number;
+}
+
+type OrderProduct = Pick<ProductAttributes, "id" | "title"> & { quantity: number };
+type OrderDto = Pick<OrderAttributes, "id"> & { products: OrderProduct[] };

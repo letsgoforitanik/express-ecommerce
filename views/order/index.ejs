@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partial/head.ejs') %>
+    </head>
+
+    <body>
+        <header class="main-header">
+            <%- include('../partial/header.ejs') %>
+            <link rel="stylesheet" href="/css/product.css" />
+            <link rel="stylesheet" href="/css/cart.css" />
+        </header>
+
+        <main>
+            <% if (orders.length <= 0) { %>
+            <h1>Nothing there!</h1>
+            <% } else { %>
+            <ul>
+                <% orders.forEach(order => { %>
+                <li>
+                    <h1># <%= order.id %></h1>
+                    <ul>
+                        <% order.products.forEach(product => { %>
+                        <li><%= product.title %> (<%= product.quantity %>)</li>
+                        <% }); %>
+                    </ul>
+                </li>
+                <% }); %>
+            </ul>
+            <% } %>
+        </main>
+    </body>
+</html>

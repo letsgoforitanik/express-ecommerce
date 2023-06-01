@@ -1,11 +1,14 @@
 import { DataTypes, FindOptions, Model } from "sequelize";
 
 import sequelize from "../helpers/sequelize";
-import { CartAttributes, CartItemAttributes, ProductAttributes, ProductCreationDto, UserAttributes } from "../types";
+import { CartAttributes, OrderAttributes, ProductAttributes, ProductCreationDto, UserAttributes } from "../types";
 import { AddOptions, HasMany, HasOne, ManyInstanceOptions, OneInstanceOptions } from "../types/common-types";
-import { Cart, Product } from ".";
+import { Cart, Order, Product } from ".";
 
-export class User extends Model<UserAttributes> implements UserAttributes, HasMany<"Products", Product>, HasOne<"Cart", Cart> {
+export class User
+    extends Model<UserAttributes>
+    implements UserAttributes, HasMany<"Products", Product>, HasOne<"Cart", Cart>, HasMany<"Orders", Order>
+{
     declare readonly id: number;
     declare name: string;
     declare email: string;
@@ -23,6 +26,14 @@ export class User extends Model<UserAttributes> implements UserAttributes, HasMa
     declare createCart: (data?: CartAttributes) => Promise<Cart>;
     declare setCart: (associatedInstance: OneInstanceOptions<Cart>) => Promise<any>;
     declare getCart: () => Promise<Cart>;
+    /////////////////////////// Orders
+    declare getOrders: (options?: FindOptions<OrderAttributes>) => Promise<Order[]>;
+    declare countOrders: () => Promise<number>;
+    declare hasOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<boolean>;
+    declare setOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
+    declare removeOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
+    declare addOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
+    declare createOrder: () => Promise<Order>;
 }
 
 User.init(

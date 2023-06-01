@@ -21,3 +21,8 @@ export async function deleteProductFromUserCart(user: User, productId: number) {
     const products = await cart.getProducts({ where: { id: productId } });
     products[0].CartItem?.destroy();
 }
+
+export async function emptyCart(user: User) {
+    const cart = await userRepo.getUserCart(user);
+    await cart.setProducts(null);
+}

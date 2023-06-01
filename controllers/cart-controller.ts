@@ -17,6 +17,7 @@ router.get("/", async function (_, response) {
 router.post("/add", async function (request, response) {
     const productId = Number(request.body.id);
     const user = await userRepo.getUser(1);
+
     await cartRepo.addProductToUserCart(user, productId);
     response.redirect("/");
 });
@@ -24,6 +25,7 @@ router.post("/add", async function (request, response) {
 router.post("/delete", async function (request, response) {
     const productId = Number(request.body.productId);
     const user = await userRepo.getUser(1);
+
     await cartRepo.deleteProductFromUserCart(user, productId);
     response.redirect("/cart");
 });
