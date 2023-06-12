@@ -4,7 +4,7 @@ import { userRepo, productRepo } from "../repositories";
 const router = express.Router();
 
 router.get("/products", async function (_, response) {
-    const user = await userRepo.getUser(1);
+    const user = await userRepo.getUser("648422ce024283a52110999d");
     const products = await productRepo.getProducts(user);
 
     response.render("admin/product-list", {
@@ -23,13 +23,13 @@ router.get("/add-product", function (_, response) {
 
 router.post("/add-product", async function (request, response) {
     const { title, price, description, imageUrl } = request.body;
-    const user = await userRepo.getUser(1);
-    await productRepo.createProduct(user, { title, price, description, imageUrl });
+    const user = await userRepo.getUser("648422ce024283a52110999d");
+    await productRepo.createProduct(user, { title, price: Number(price), description, imageUrl });
     response.redirect("/");
 });
 
 router.get("/edit-product/:id", async function (request, response) {
-    const productId = Number(request.params.id);
+    const productId = request.params.id;
     const product = await productRepo.getById(productId);
 
     response.render("admin/edit-product", {
@@ -42,13 +42,13 @@ router.get("/edit-product/:id", async function (request, response) {
 router.post("/edit-product", async function (request, response) {
     const { id, title, description, price, imageUrl } = request.body;
     const changedAttributes = { title, description, imageUrl, price: Number(price) };
-    await productRepo.updateProduct(Number(id), changedAttributes);
+    await productRepo.updateProduct(id, changedAttributes);
     response.redirect("/admin/products");
 });
 
 router.post("/delete-product", async function (request, response) {
     const { id } = request.body;
-    await productRepo.deleteProduct(Number(id));
+    await productRepo.deleteProduct(id);
     response.redirect("/admin/products");
 });
 

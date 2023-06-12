@@ -3,8 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import { productController, adminController } from "./controllers";
 import { homeController, cartController, orderController } from "./controllers";
-import sequelize from "./helpers/sequelize";
-import { User } from "./models";
 
 const app = express();
 
@@ -19,8 +17,6 @@ app.use("/admin", adminController.router);
 app.use("/products", productController.router);
 app.use("/cart", cartController.router);
 app.use("/orders", orderController.router);
-
-sequelize.sync().then(console.log);
 
 const server = createServer(app);
 

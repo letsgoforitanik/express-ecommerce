@@ -1,5 +1,5 @@
-import { User } from "../models";
+import { User } from "../models-mongo/user-model";
 
-export async function getUser(userId: number) {
-    return await User.findByPk(userId);
+export async function getUser(userId: string) {
+    return await User.findById(userId);
 }
