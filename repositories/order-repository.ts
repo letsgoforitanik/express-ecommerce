@@ -1,4 +1,4 @@
-import { User } from "../models-mongo/user-model";
+import { User } from "../models/user-model";
 
 export async function createOrder(user: User) {
     await user.createOrder();

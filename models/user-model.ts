@@ -1,59 +1,81 @@
-import { DataTypes, FindOptions, Model } from "sequelize";
+import { ObjectId, WithId, Document } from "mongodb";
+import { Product, ProductData } from "./product-model";
+import { Cart } from "./cart-model";
+import { Order } from "./order-model";
+import getDb from "../helpers/getDb";
 
-import sequelize from "../helpers/sequelize";
-import { CartAttributes, OrderAttributes, ProductAttributes, ProductCreationDto, UserAttributes } from "../types";
-import { AddOptions, HasMany, HasOne, ManyInstanceOptions, OneInstanceOptions } from "../types/common-types";
-import { Cart, Order, Product } from ".";
-
-export class User
-    extends Model<UserAttributes>
-    implements UserAttributes, HasMany<"Products", Product>, HasOne<"Cart", Cart>, HasMany<"Orders", Order>
-{
-    declare readonly id: number;
-    declare name: string;
-    declare email: string;
-    declare createdAt?: Date;
-    declare updatedAt?: Date;
-    ///////////////////////////// Products
-    declare getProducts: (options?: FindOptions<ProductAttributes>) => Promise<Product[]>;
-    declare countProducts: () => Promise<number>;
-    declare hasProducts: (models: ManyInstanceOptions<Product>) => Promise<boolean>;
-    declare setProducts: (models: ManyInstanceOptions<Product>) => Promise<any>;
-    declare removeProducts: (models: ManyInstanceOptions<Product>) => Promise<any>;
-    declare addProducts: (models: ManyInstanceOptions<Product>, options?: AddOptions<ProductAttributes>) => Promise<any>;
-    declare createProduct: (data: ProductCreationDto) => Promise<Product>;
-    //////////////////////////// Cart
-    declare createCart: (data?: CartAttributes) => Promise<Cart>;
-    declare setCart: (associatedInstance: OneInstanceOptions<Cart>) => Promise<any>;
-    declare getCart: () => Promise<Cart>;
-    /////////////////////////// Orders
-    declare getOrders: (options?: FindOptions<OrderAttributes>) => Promise<Order[]>;
-    declare countOrders: () => Promise<number>;
-    declare hasOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<boolean>;
-    declare setOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
-    declare removeOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
-    declare addOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
-    declare createOrder: () => Promise<Order>;
+interface UserData {
+    id: string;
+    name: string;
+    email: string;
+    cart: Cart;
 }
 
-User.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-    },
-    { sequelize: sequelize }
-);
+export class User implements UserData {
+    id: string;
+    name: string;
+    email: string;
+    cart: Cart;
 
-export default User;
+    constructor(u: WithId<Document>) {
+        this.id = u._id.toString();
+        this.name = u.name;
+        this.email = u.email;
+        this.cart = u.cart;
+    }
+
+    static async getCollection() {
+        const db = await getDb();
+        return db.collection("users");
+    }
+
+    static async create(attributes: Partial<UserData>) {
+        const usersCollection = await this.getCollection();
+        const result = await usersCollection.insertOne({ ...attributes, cart: [] });
+
+        return new User({
+            ...attributes,
+            _id: result.insertedId,
+            cart: new Cart([], result.insertedId.toString()),
+        });
+    }
+
+    static async findById(userId: string) {
+        const usersCollection = await this.getCollection();
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        return new User({ ...user, cart: new Cart(user.cart.items, user._id.toString()) });
+    }
+
+    async createProduct(data: Partial<ProductData>) {
+        return await Product.create(data, this.id);
+    }
+
+    async getProducts() {
+        const userId = new ObjectId(this.id);
+        return await Product.findAll({ userId });
+    }
+
+    async createOrder() {
+        const products = this.cart.items.map((item) => ({ id: item.productId, quantity: item.quantity }));
+        const order = await Order.create({ products, userId: this.id });
+        await this.cart.clear();
+        return order;
+    }
+
+    async getOrders() {
+        const orders = await Order.findAll({ userId: new ObjectId(this.id) });
+
+        const productIds = new Set<string>();
+        orders.forEach((order) => order.products.forEach((product) => productIds.add(product.id)));
+
+        const allProducts = await Product.findAll({ _id: { $in: Array.from(productIds).map((id) => new ObjectId(id)) } });
+
+        return orders.map((order) => ({
+            ...order,
+            products: order.products.map((op) => ({
+                ...op,
+                detail: allProducts.find((p) => p.id === op.id),
+            })),
+        }));
+    }
+}

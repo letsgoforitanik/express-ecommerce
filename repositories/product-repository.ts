@@ -1,5 +1,5 @@
-import { User } from "../models-mongo/user-model";
-import { Product, ProductData } from "../models-mongo/product-model";
+import { User } from "../models/user-model";
+import { Product, ProductData } from "../models/product-model";
 
 export async function createProduct(user: User, productData: Partial<ProductData>) {
     await user.createProduct(productData);
