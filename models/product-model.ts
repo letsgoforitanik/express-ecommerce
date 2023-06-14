@@ -1,42 +1,32 @@
-import { Model, DataTypes } from "sequelize";
-import sequelize from "../helpers/sequelize";
-import { ProductAttributes } from "../types";
-import { CartItem, OrderItem } from ".";
+import mongoose, { Schema } from "mongoose";
+import { ConstructedType } from "../types/common-types";
 
-export class Product extends Model<ProductAttributes> implements ProductAttributes {
-    declare readonly id: number;
-    declare title: string;
-    declare imageUrl: string;
-    declare price: number;
-    declare description: string;
-    declare CartItem?: CartItem;
-    declare OrderItem?: OrderItem;
-}
-
-Product.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            allowNull: false,
-            autoIncrement: true,
-        },
-        title: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        imageUrl: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        description: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        price: {
-            type: DataTypes.DOUBLE,
-            allowNull: false,
-        },
+const productSchema = new Schema({
+    title: {
+        type: Schema.Types.String,
+        required: true,
     },
-    { sequelize: sequelize }
-);
+    imageUrl: {
+        type: Schema.Types.String,
+        required: true,
+    },
+    price: {
+        type: Schema.Types.Number,
+        required: true,
+    },
+    description: {
+        type: Schema.Types.String,
+        required: true,
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+    },
+});
+
+const Product = mongoose.model("Product", productSchema);
+
+export type ProductData = ConstructedType<typeof Product>;
+
+export default Product;

@@ -1,10 +1,11 @@
 import { createServer } from "http";
+
 import express from "express";
 import bodyParser from "body-parser";
+import mongoose from "mongoose";
+
 import { productController, adminController } from "./controllers";
 import { homeController, cartController, orderController } from "./controllers";
-import sequelize from "./helpers/sequelize";
-import { User } from "./models";
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use("/products", productController.router);
 app.use("/cart", cartController.router);
 app.use("/orders", orderController.router);
 
-sequelize.sync().then(console.log);
+mongoose.connect("mongodb://127.0.0.1:27017/shop");
 
 const server = createServer(app);
 

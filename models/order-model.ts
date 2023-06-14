@@ -1,30 +1,29 @@
-import { DataTypes, FindOptions, Model } from "sequelize";
-import { OrderAttributes, OrderItemAttributes, ProductAttributes } from "../types";
-import sequelize from "../helpers/sequelize";
-import { AddOptions, HasMany, ManyInstanceOptions } from "../types/common-types";
-import { Product } from ".";
+import mongoose, { Schema } from "mongoose";
+import { ConstructedType } from "../types/common-types";
 
-export class Order extends Model<OrderAttributes> implements OrderAttributes, HasMany<"Products", Product> {
-    declare readonly id: number;
-    declare createdAt?: Date;
-    declare updatedAt?: Date;
-    /////////////////////////// Products
-    declare getProducts: (options?: FindOptions<ProductAttributes>) => Promise<Product[]>;
-    declare countProducts: () => Promise<number>;
-    declare hasProducts: (models: ManyInstanceOptions<Product>) => Promise<boolean>;
-    declare setProducts: (models: ManyInstanceOptions<Product>) => Promise<any>;
-    declare removeProducts: (models: ManyInstanceOptions<Product>) => Promise<any>;
-    declare addProducts: (models: ManyInstanceOptions<Product>, options?: AddOptions<OrderItemAttributes>) => Promise<any>;
-}
-
-Order.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            allowNull: false,
-            autoIncrement: true,
-        },
+const orderSchema = new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
     },
-    { sequelize: sequelize }
-);
+    items: [
+        {
+            productId: {
+                type: Schema.Types.ObjectId,
+                required: true,
+                ref: "Product",
+            },
+            quantity: {
+                type: Schema.Types.Number,
+                required: true,
+            },
+        },
+    ],
+});
+
+const Order = mongoose.model("Order", orderSchema);
+
+export type OrderData = ConstructedType<typeof Order>;
+
+export default Order;

@@ -8,20 +8,20 @@
         <header class="main-header">
             <%- include('../partial/header.ejs') %>
             <link rel="stylesheet" href="/css/product.css" />
-            <link rel="stylesheet" href="/css/cart.css" />
+            <link rel="stylesheet" href="/css/order.css" />
         </header>
 
         <main>
             <% if (orders.length <= 0) { %>
             <h1>Nothing there!</h1>
             <% } else { %>
-            <ul>
+            <ul class="orders">
                 <% orders.forEach(order => { %>
-                <li>
-                    <h1># <%= order.id %></h1>
-                    <ul>
-                        <% order.Products.forEach(product => { %>
-                        <li><%= product.title %> (<%= product.OrderItem.quantity %>)</li>
+                <li class="orders__item">
+                    <h1>Order - # <%= order.id %></h1>
+                    <ul class="orders__products">
+                        <% order.items.forEach(item => { %>
+                        <li class="orders__products-item"><%= item.product.title %> (<%= item.quantity %>)</li>
                         <% }); %>
                     </ul>
                 </li>

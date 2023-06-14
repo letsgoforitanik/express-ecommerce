@@ -1,23 +1,25 @@
-import { Product, User } from "../models";
+import { Product } from "../models";
+import { UserData } from "../models/user-model";
 import { ProductCreationDto, ProductUpdationDto } from "../types";
 
-export async function createProduct(user: User, productData: ProductCreationDto) {
-    await user.createProduct(productData);
+export async function createProduct(user: UserData, productData: ProductCreationDto) {
+    await Product.create({ ...productData, userId: user });
 }
 
-export async function getProducts(user: User) {
-    const products = await Product.findAll({ where: { UserId: user.id } });
+export async function getProducts(user: UserData) {
+    const products = await Product.find({ userId: user });
     return products;
 }
 
-export async function getById(id: number) {
-    return await Product.findByPk(id);
+export async function getById(id: string) {
+    const product = await Product.findById(id);
+    return product;
 }
 
-export async function updateProduct(id: number, changedAttributes: ProductUpdationDto) {
-    await Product.update(changedAttributes, { where: { id } });
+export async function updateProduct(id: string, changedAttributes: ProductUpdationDto) {
+    await Product.findByIdAndUpdate(id, changedAttributes);
 }
 
-export async function deleteProduct(id: number) {
-    await Product.destroy({ where: { id } });
+export async function deleteProduct(id: string) {
+    await Product.findByIdAndRemove(id);
 }

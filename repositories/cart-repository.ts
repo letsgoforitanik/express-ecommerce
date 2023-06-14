@@ -1,36 +1,25 @@
-import { User } from "../models";
+import { ProductData } from "../models/product-model";
+import { UserData } from "../models/user-model";
 
-async function getUserCart(user: User) {
-    let cart = await user.getCart();
-    if (!cart) cart = await user.createCart();
-    return cart;
+export async function addProductToCart(user: UserData, productId: string) {
+    await user.addToCart(productId);
 }
 
-export async function addProductToCart(user: User, productId: number) {
-    const cart = await getUserCart(user);
+export async function getCartProducts(user: UserData) {
+    const userInfo = await user.populate("cart.items.productId");
 
-    console.log("user-cart", cart.toJSON());
+    const cartProducts = userInfo.cart.items.map((item: any) => ({
+        detail: item.productId as ProductData,
+        quantity: item.quantity as number,
+    }));
 
-    const products = await cart.getProducts({ where: { id: productId } });
-
-    let quantity = 1;
-
-    if (products.length > 0) quantity = products[0].CartItem.quantity + 1;
-    await cart.addProducts(productId, { through: { quantity } });
+    return cartProducts;
 }
 
-export async function getCartProducts(user: User) {
-    const cart = await getUserCart(user);
-    return await cart.getProducts();
+export async function removeProductFromCart(user: UserData, productId: string) {
+    await user.deleteFromCart(productId);
 }
 
-export async function removeProductFromCart(user: User, productId: number) {
-    const cart = await getUserCart(user);
-    const products = await cart.getProducts({ where: { id: productId } });
-    products[0].CartItem?.destroy();
-}
-
-export async function emptyCart(user: User) {
-    const cart = await getUserCart(user);
-    await cart.setProducts(null);
+export async function emptyCart(user: UserData) {
+    await user.clearCart();
 }

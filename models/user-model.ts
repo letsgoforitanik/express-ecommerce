@@ -1,59 +1,63 @@
-import { DataTypes, FindOptions, Model } from "sequelize";
+import mongoose, { Schema, Types } from "mongoose";
+import { ConstructedType } from "../types/common-types";
 
-import sequelize from "../helpers/sequelize";
-import { CartAttributes, OrderAttributes, ProductAttributes, ProductCreationDto, UserAttributes } from "../types";
-import { AddOptions, HasMany, HasOne, ManyInstanceOptions, OneInstanceOptions } from "../types/common-types";
-import { Cart, Order, Product } from ".";
-
-export class User
-    extends Model<UserAttributes>
-    implements UserAttributes, HasMany<"Products", Product>, HasOne<"Cart", Cart>, HasMany<"Orders", Order>
-{
-    declare readonly id: number;
-    declare name: string;
-    declare email: string;
-    declare createdAt?: Date;
-    declare updatedAt?: Date;
-    ///////////////////////////// Products
-    declare getProducts: (options?: FindOptions<ProductAttributes>) => Promise<Product[]>;
-    declare countProducts: () => Promise<number>;
-    declare hasProducts: (models: ManyInstanceOptions<Product>) => Promise<boolean>;
-    declare setProducts: (models: ManyInstanceOptions<Product>) => Promise<any>;
-    declare removeProducts: (models: ManyInstanceOptions<Product>) => Promise<any>;
-    declare addProducts: (models: ManyInstanceOptions<Product>, options?: AddOptions<ProductAttributes>) => Promise<any>;
-    declare createProduct: (data: ProductCreationDto) => Promise<Product>;
-    //////////////////////////// Cart
-    declare createCart: (data?: CartAttributes) => Promise<Cart>;
-    declare setCart: (associatedInstance: OneInstanceOptions<Cart>) => Promise<any>;
-    declare getCart: () => Promise<Cart>;
-    /////////////////////////// Orders
-    declare getOrders: (options?: FindOptions<OrderAttributes>) => Promise<Order[]>;
-    declare countOrders: () => Promise<number>;
-    declare hasOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<boolean>;
-    declare setOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
-    declare removeOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
-    declare addOrders: (targetInstances: ManyInstanceOptions<Order>) => Promise<any>;
-    declare createOrder: () => Promise<Order>;
-}
-
-User.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+const userSchema = new Schema({
+    name: {
+        type: Schema.Types.String,
+        required: true,
     },
-    { sequelize: sequelize }
-);
+    email: {
+        type: Schema.Types.String,
+        required: true,
+    },
+    cart: {
+        type: {
+            items: [
+                {
+                    productId: {
+                        type: Schema.Types.ObjectId,
+                        required: true,
+                        ref: "Product",
+                    },
+                    quantity: {
+                        type: Schema.Types.Number,
+                        required: true,
+                    },
+                },
+            ],
+        },
+        required: true,
+    },
+});
+
+const methods = {
+    async addToCart(this: UserType, productId: string) {
+        const cartItems = this.cart.items;
+        const itemIndex = cartItems.findIndex((item) => item.productId.toString() === productId);
+        if (itemIndex >= 0) cartItems[itemIndex].quantity++;
+        else cartItems.push({ productId: new Types.ObjectId(productId), quantity: 1 });
+        await this.save();
+    },
+
+    async deleteFromCart(this: UserType, productId: string) {
+        this.cart.items = this.cart.items.filter((item) => item.productId.toString() !== productId);
+        await this.save();
+    },
+
+    async clearCart(this: UserType) {
+        this.cart.items = [];
+        await this.save();
+    },
+};
+
+userSchema.methods.addToCart = methods.addToCart;
+userSchema.methods.deleteFromCart = methods.deleteFromCart;
+userSchema.methods.clearCart = methods.clearCart;
+
+const User = mongoose.model("User", userSchema);
+
+type UserType = ConstructedType<typeof User>;
+
+export type UserData = UserType & typeof methods;
 
 export default User;
