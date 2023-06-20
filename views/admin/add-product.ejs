@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <%- include('../partial/head') %>
-        <link rel="stylesheet" href="/css/product.css" />
-        <link rel="stylesheet" href="/css/forms.css" />
-    </head>
+<%- contentFor('style') %>
+<link rel="stylesheet" href="/css/product.css" />
+<link rel="stylesheet" href="/css/forms.css" />
 
-    <body>
-        <header class="main-header"><%- include('../partial/header') %></header>
-        <main><%- include('../partial/product-form', { action : '/admin/add-product', edit : false, product : null }) %></main>
-    </body>
-</html>
+<%- contentFor('body') %>
+<!-- body -->
+<%- include('../partial/product-form', { action : '/admin/add-product', edit : false, product : null }) %>
+<!-- body -->

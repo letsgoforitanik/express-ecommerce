@@ -1,41 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <%- include('../partial/head.ejs') %>
-    </head>
+<%- contentFor('style') %>
+<link rel="stylesheet" href="/css/product.css" />
+<link rel="stylesheet" href="/css/cart.css" />
 
-    <body>
-        <header class="main-header">
-            <%- include('../partial/header.ejs') %>
-            <link rel="stylesheet" href="/css/product.css" />
-            <link rel="stylesheet" href="/css/cart.css" />
-        </header>
+<%- contentFor('body') %>
+<!-- body -->
+<% if (cartProducts.length > 0) { %>
+<ul class="cart__item-list">
+    <% for (const p of cartProducts) { %>
+    <li class="cart__item">
+        <h1><%= p.detail.title %></h1>
+        <h2>Quantity: <%= p.quantity %></h2>
+        <form action="/cart/delete" method="POST">
+            <input type="hidden" value="<%= p.detail.id %>" name="productId" />
+            <button class="btn danger" type="submit">Delete</button>
+        </form>
+    </li>
+    <% } %>
+</ul>
+<br />
+<hr />
 
-        <main>
-            <% if (cartProducts.length > 0) { %>
-            <ul class="cart__item-list">
-                <% cartProducts.forEach(p => { %>
-                <li class="cart__item">
-                    <h1><%= p.detail.title %></h1>
-                    <h2>Quantity: <%= p.quantity %></h2>
-                    <form action="/cart/delete" method="POST">
-                        <input type="hidden" value="<%= p.detail.id %>" name="productId" />
-                        <button class="btn danger" type="submit">Delete</button>
-                    </form>
-                </li>
-                <% }) %>
-            </ul>
-            <br />
-            <hr />
-
-            <div class="centered">
-                <form action="/orders/create" method="post">
-                    <button type="submit" class="btn">Order Now!</button>
-                </form>
-            </div>
-            <% } else { %>
-            <h1>No Products in Cart!</h1>
-            <% } %>
-        </main>
-    </body>
-</html>
+<div class="centered">
+    <form action="/orders/create" method="post">
+        <button type="submit" class="btn">Order Now!</button>
+    </form>
+</div>
+<% } else { %>
+<h1>No Products in Cart!</h1>
+<% } %>
+<!-- body -->

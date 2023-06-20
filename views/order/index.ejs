@@ -1,33 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <%- include('../partial/head.ejs') %>
-    </head>
+<%- contentFor('style') %>
+<link rel="stylesheet" href="/css/product.css" />
+<link rel="stylesheet" href="/css/order.css" />
 
-    <body>
-        <header class="main-header">
-            <%- include('../partial/header.ejs') %>
-            <link rel="stylesheet" href="/css/product.css" />
-            <link rel="stylesheet" href="/css/order.css" />
-        </header>
-
-        <main>
-            <% if (orders.length <= 0) { %>
-            <h1>Nothing there!</h1>
-            <% } else { %>
-            <ul class="orders">
-                <% orders.forEach(order => { %>
-                <li class="orders__item">
-                    <h1>Order - # <%= order.id %></h1>
-                    <ul class="orders__products">
-                        <% order.items.forEach(item => { %>
-                        <li class="orders__products-item"><%= item.product.title %> (<%= item.quantity %>)</li>
-                        <% }); %>
-                    </ul>
-                </li>
-                <% }); %>
-            </ul>
-            <% } %>
-        </main>
-    </body>
-</html>
+<%- contentFor('body') %>
+<!-- body -->
+<% if (orders.length <= 0) { %>
+<h1>Nothing there!</h1>
+<% } else { %>
+<ul class="orders">
+    <% for (const order of orders) { %>
+    <li class="orders__item">
+        <h1>Order - # <%= order.id %></h1>
+        <ul class="orders__products">
+            <% order.items.forEach(item => { %>
+            <li class="orders__products-item"><%= item.product.title %> (<%= item.quantity %>)</li>
+            <% }); %>
+        </ul>
+    </li>
+    <% } %>
+</ul>
+<% } %>
+<!-- body -->
